@@ -49,55 +49,55 @@ SMARTS = [
 ]
 
 FILTERS = [
-    "filters:brightness(10)",
-    "filters:contrast(10)",
-    "filters:equalize()",
-    "filters:grayscale()",
-    "filters:rotate(90)",
-    "filters:noise(10)",
-    "filters:quality(5)",
-    "filters:redeye()",
-    "filters:rgb(10,-10,20)",
-    "filters:round_corner(20,255,255,100)",
-    "filters:sharpen(6,2.5,false)",
-    "filters:sharpen(6,2.5,true)",
-    "filters:strip_exif()",
-    "filters:strip_icc()",
-    "filters:watermark(rgba-interlaced.png,10,10,50)",
-    "filters:watermark(rgba-interlaced.png,center,center,50)",
-    "filters:watermark(rgba-interlaced.png,repeat,repeat,50)",
-    "filters:frame(rgba.png)",
+    # "filters:brightness(10)",
+    # "filters:contrast(10)",
+    # "filters:equalize()",
+    # "filters:grayscale()",
+    # "filters:rotate(90)",
+    # "filters:noise(10)",
+    # "filters:quality(5)",
+    # "filters:redeye()",
+    # "filters:rgb(10,-10,20)",
+    # "filters:round_corner(20,255,255,100)",
+    # "filters:sharpen(6,2.5,false)",
+    # "filters:sharpen(6,2.5,true)",
+    # "filters:strip_exif()",
+    # "filters:strip_icc()",
+    # "filters:watermark(rgba-interlaced.png,10,10,50)",
+    # "filters:watermark(rgba-interlaced.png,center,center,50)",
+    # "filters:watermark(rgba-interlaced.png,repeat,repeat,50)",
+    # "filters:frame(rgba.png)",
     "filters:fill(ff0000)",
-    "filters:fill(auto)",
-    "filters:fill(ff0000,true)",
-    "filters:fill(transparent)",
-    "filters:fill(transparent,true)",
-    "filters:blur(2)",
-    "filters:extract_focal()",
-    "filters:focal()",
-    "filters:focal(0x0:1x1)",
-    "filters:no_upscale()",
-    "filters:gifv()",
-    "filters:gifv(webm)",
-    "filters:gifv(mp4)",
-    "filters:max_age(600)",
-    "filters:upscale()",
-    # one big filter 4-line string
-    "filters:curve([(0,0),(255,255)],[(0,50),(16,51),(32,69),"
-    "(58,85),(92,120),(128,170),(140,186),(167,225),"  # NOQA
-    "(192,245),(225,255),(244,255),(255,254)],[(0,0),(16,2),"
-    "(32,18),(64,59),(92,116),(128,182),(167,211),(192,227)"  # NOQA
-    ",(224,240),(244,247),(255,252)],[(0,48),(16,50),(62,77),"
-    "(92,110),(128,144),(140,153),(167,180),(192,192),"  # NOQA
-    "(224,217),(244,225),(255,225)])",
+    # "filters:fill(auto)",
+    # "filters:fill(ff0000,true)",
+    # "filters:fill(transparent)",
+    # "filters:fill(transparent,true)",
+    # "filters:blur(2)",
+    # "filters:extract_focal()",
+    # "filters:focal()",
+    # "filters:focal(0x0:1x1)",
+    # "filters:no_upscale()",
+    # "filters:gifv()",
+    # "filters:gifv(webm)",
+    # "filters:gifv(mp4)",
+    # "filters:max_age(600)",
+    # "filters:upscale()",
+    # # one big filter 4-line string
+    # "filters:curve([(0,0),(255,255)],[(0,50),(16,51),(32,69),"
+    # "(58,85),(92,120),(128,170),(140,186),(167,225),"  # NOQA
+    # "(192,245),(225,255),(244,255),(255,254)],[(0,0),(16,2),"
+    # "(32,18),(64,59),(92,116),(128,182),(167,211),(192,227)"  # NOQA
+    # ",(224,240),(244,247),(255,252)],[(0,48),(16,50),(62,77),"
+    # "(92,110),(128,144),(140,153),(167,180),(192,192),"  # NOQA
+    # "(224,217),(244,225),(255,225)])",
 ]
 
 ORIGINAL_IMAGES_BASE = [
-    "gradient.jpg",
-    "cmyk.jpg",
+    # "gradient.jpg",
+    # "cmyk.jpg",
     "rgba.png",
-    "grayscale.jpg",
-    "16bit.png",
+    # "grayscale.jpg",
+    # "16bit.png",
 ]
 
 ORIGINAL_IMAGES_GIF_WEBP = [

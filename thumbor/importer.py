@@ -14,7 +14,7 @@ from thumbor.utils import logger
 
 
 def import_class(name, get_module=False):
-    module_name = name if get_module else ".".join(name.split(".")[:-1])
+    module_name = name if get_module else ".".join(name.split(".")[:-1])  # use rsplit instead
     klass = name.split(".")[-1]
 
     module = import_module(module_name)
