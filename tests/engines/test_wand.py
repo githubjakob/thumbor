@@ -109,3 +109,21 @@ class WandEngineTestCase(TestCase):
         expect(data).to_length(len(pil_data))
         expect(data[:100]).to_equal(pil_data[:100])
         expect(data[-100:]).to_equal(pil_data[-100:])
+
+    def test_get_and_set_image_data(self):
+        engine = Engine(self.context)
+        with open(join(STORAGE_PATH, "1bit.png"), "rb") as image_file:
+            buffer = image_file.read()
+        expect(buffer).not_to_equal(None)
+
+        engine.load(buffer, '.png')
+
+        _, data_before = engine.image_data_as_rgb()
+
+        engine.set_image_data(data_before)
+
+        _, data_after = engine.image_data_as_rgb()
+
+        expect(data_before).to_length(len(data_after))
+        expect(data_before[:100]).to_equal(data_after[:100])
+        expect(data_before[-100:]).to_equal(data_after[-100:])

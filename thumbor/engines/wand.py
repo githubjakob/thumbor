@@ -74,9 +74,6 @@ class Engine(BaseEngine):
     def get_image_data(self):
         return bytes(self.image.export_pixels(channel_map=self.get_image_mode()))
 
-    def set_image_data(self, data):
-        self.image = Image(blob=data, format=self.image.format)
-
     @deprecated("Use image_data_as_rgb instead.")
     def get_image_mode(self):
         if "alpha" in self.image.type:
@@ -84,8 +81,15 @@ class Engine(BaseEngine):
         return "RGB"
 
     def image_data_as_rgb(self, update_image=True):
-        # TODO: Handle other image formats
         return self.get_image_mode(), self.get_image_data()
+
+    def set_image_data(self, data):
+        self.image.import_pixels(
+            width=self.image.width,
+            height=self.image.height,
+            channel_map=self.get_image_mode(),
+            data=data,
+        )
 
     def draw_rectangle(self, x, y, width, height):
         with Drawing() as draw:
