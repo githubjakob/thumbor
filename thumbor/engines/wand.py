@@ -9,7 +9,7 @@
 # Copyright (c) 2014 globo.com timehome@corp.globo.com
 
 from wand.drawing import Drawing
-from wand.image import Color, Image, IMAGE_TYPES
+from wand.image import Image, IMAGE_TYPES
 
 from thumbor.engines import BaseEngine
 from thumbor.utils import deprecated
@@ -17,8 +17,19 @@ from thumbor.utils import deprecated
 
 GRAYSCALE_TYPE = IMAGE_TYPES[2]
 GRAYSCALEALPHA_TYPE = IMAGE_TYPES[3]
+PALETTE_TYPE = IMAGE_TYPES[4]
+PALETTEALPHA_TYPE = IMAGE_TYPES[5]
 TRUECOLOR_TYPE = IMAGE_TYPES[6]
 TRUECOLORALPHA_TYPE = IMAGE_TYPES[7]
+
+MODES = {
+    GRAYSCALE_TYPE: "L",
+    GRAYSCALEALPHA_TYPE: "L",  # FIXME: review
+    PALETTE_TYPE: "P",
+    PALETTEALPHA_TYPE: "P",  # FIXME: review
+    TRUECOLOR_TYPE: "RGB",
+    TRUECOLORALPHA_TYPE: "RGBA",
+}
 
 FORMATS = {
     '.jpg': 'JPEG',
@@ -61,10 +72,10 @@ class Engine(BaseEngine):
 
     @deprecated("Use image_data_as_rgb instead.")
     def get_image_data(self):
-        return self.image.make_blob()
+        return bytes(self.image.export_pixels(channel_map=self.get_image_mode()))
 
     def set_image_data(self, data):
-        self.image(blob=data)
+        self.image = Image(blob=data, format=self.image.format)
 
     @deprecated("Use image_data_as_rgb instead.")
     def get_image_mode(self):

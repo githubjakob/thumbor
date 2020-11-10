@@ -49,7 +49,7 @@ SMARTS = [
 ]
 
 FILTERS = [
-    # "filters:brightness(10)",
+    "filters:brightness(10)",
     # "filters:contrast(10)",
     # "filters:equalize()",
     # "filters:grayscale()",
