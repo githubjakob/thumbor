@@ -8,15 +8,17 @@
 # http://www.opensource.org/licenses/mit-license
 # Copyright (c) 2014 globo.com timehome@corp.globo.com
 
-from wand.image import (
-    Image, Blob, FilterTypes,
-    Color, InterlaceType, CompositeOperator as co
-)
-from wand.api import Draw
-from wand._pgmagick import get_blob_data
+from wand.drawing import Drawing
+from wand.image import Color, Image, IMAGE_TYPES
 
 from thumbor.engines import BaseEngine
 from thumbor.utils import deprecated
+
+
+GRAYSCALE_TYPE = IMAGE_TYPES[2]
+GRAYSCALEALPHA_TYPE = IMAGE_TYPES[3]
+TRUECOLOR_TYPE = IMAGE_TYPES[6]
+TRUECOLORALPHA_TYPE = IMAGE_TYPES[7]
 
 FORMATS = {
     '.jpg': 'JPEG',
@@ -28,23 +30,18 @@ FORMATS = {
 
 class Engine(BaseEngine):
 
-    def gen_image(self, size, color_value):
-        color = Color(str(color_value))
-        if not color.isValid():
-            raise ValueError('Color %s is not valid.' % color_value)
-        return Image(*size, color)
+    def gen_image(self, size, color):
+        return Image().blank(*size, color)
 
     def create_image(self, buffer):
         return Image(blob=buffer)
 
     @property
     def size(self):
-        size = self.image.size()
-
-        return (size.width(), size.height())
+        return self.image.size
 
     def resize(self, width, height):
-        self.image.zoom('%dx%d!' % (width, height))
+        self.image.resize(int(width), int(height))
 
     def crop(self, left, top, right, bottom):
         self.image.crop(
@@ -58,45 +55,20 @@ class Engine(BaseEngine):
         self.image.flop()
 
     def read(self, extension=None, quality=None):
-        if quality is None:
-            quality = self.context.config.QUALITY
-
-        #returns image buffer in byte format.
-        img_buffer = Blob()
-
-        ext = extension or self.extension
-        try:
-            self.image.magick(FORMATS[ext])
-        except KeyError:
-            self.image.magick(FORMATS['.jpg'])
-
-        if ext == '.jpg':
-            self.image.interlaceType(InterlaceType.LineInterlace)
-            self.image.quality(quality)
-            f = FilterTypes.CatromFilter
-            self.image.filterType(f)
-
-        self.image.write(img_buffer)
-
-        return img_buffer.data
+        if extension is not None:
+            return self.image.convert(extension.lstrip(".")).make_blob()
+        return self.image.make_blob()
 
     @deprecated("Use image_data_as_rgb instead.")
     def get_image_data(self):
-        self.image.magick(self.get_image_mode())
-        blob = Blob()
-        self.image.write(blob)
-        data = get_blob_data(blob)
-        return data
+        return self.image.make_blob()
 
     def set_image_data(self, data):
-        self.image.magick(self.get_image_mode())
-        blob = Blob(data)
-        self.image.size(self.image.size())
-        self.image.read(blob)
+        self.image(blob=data)
 
     @deprecated("Use image_data_as_rgb instead.")
     def get_image_mode(self):
-        if self.alpha_channel:
+        if "alpha" in self.image.type:
             return "RGBA"
         return "RGB"
 
@@ -105,28 +77,32 @@ class Engine(BaseEngine):
         return self.get_image_mode(), self.get_image_data()
 
     def draw_rectangle(self, x, y, width, height):
-        draw = Draw()
-        draw.fill_opacity(0.0)
-        draw.stroke_color('white')
-        draw.stroke_width(1)
-
-        draw.rectangle(x, y, x + width, y + height)
-        self.image.draw(draw.drawer)
+        with Drawing() as draw:
+            draw.fill_color = 'transparent'
+            draw.stroke_color = 'white'
+            draw.stroke_width(1)
+            draw.rectangle(x, y, width=width, height=height)
+            draw(self.image)
 
     def paste(self, other_engine, pos, merge=True):
-        self.enable_alpha()
-        other_engine.enable_alpha()
+        self.image.alpha_channel = True
+        other_engine.image.alpha_channel = True
 
-        operator = co.OverCompositeOp if merge else co.CopyCompositeOp
+        operator = 'over' if merge else 'blend'
         self.image.composite(other_engine.image, pos[0], pos[1], operator)
 
     def enable_alpha(self):
-        self.image.type("truecoloralpha")
+        if "grayscale" in self.image.type:
+            self.image.type = GRAYSCALEALPHA_TYPE
+        else:
+            self.image.type = TRUECOLORALPHA_TYPE
 
-    def strip_icc(self):
-        self.image.iccColorProfile(Blob())
-
-    def convert_to_grayscale(self):
-        self.image.type("grayscalealpha")
-        self.image.quantizeColorSpace("gray")
-        self.image.quantize()
+    def convert_to_grayscale(self, update_image=True, alpha=True):
+        image = self.image.clone()
+        if "alpha" in self.image.type:
+            image.type = GRAYSCALEALPHA_TYPE
+        else:
+            image.type = GRAYSCALE_TYPE
+        if update_image:
+            self.image = image
+        return image
